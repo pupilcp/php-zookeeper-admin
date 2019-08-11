@@ -1,0 +1,201 @@
+div, ul, li { 
+    margin: 0px; 
+    padding: 0px; 
+    list-style-type: none; 
+} 
+
+body { 
+    background-color: #FFFFFF; 
+    font-size: 12px; 
+    margin: 0px; 
+    padding: 0px; 
+} 
+
+#TreeList { 
+    background-color: #FFFFFF; 
+    margin-top: 6px; 
+    margin-right: 9px; 
+    margin-bottom: 6px; 
+    margin-left: 9px; 
+    border: 1px solid silver; 
+    padding-bottom: 6px; 
+    padding-left: 6px; 
+} 
+#TreeList .mouseOver { 
+    background-color: #FAF3E2; 
+} 
+
+#TreeList .ParentNode { 
+    line-height: 21px; 
+    height: 21px; 
+    margin-top: 2px; 
+    clear: both; 
+} 
+
+#TreeList .ChildNode { 
+    background-image: url(/static/admin/img/bg.png); 
+    background-position: 15px -58px; 
+    padding-left: 39px; 
+    line-height: 21px; 
+    background-repeat: no-repeat; 
+    border-top-width: 0px; 
+    border-right-width: 0px; 
+    border-bottom-width: 1px; 
+    border-left-width: 0px; 
+    border-top-style: dashed; 
+    border-right-style: dashed; 
+    border-bottom-style: dashed; 
+    border-left-style: dashed; 
+    border-top-color: #aabdce; 
+    border-right-color: #aabdce; 
+    border-bottom-color: #aabdce; 
+    border-left-color: #aabdce; 
+    cursor: default; 
+    clear: both; 
+    height: 21px; 
+    color: #314f6a; 
+} 
+
+#TreeList .title { 
+    float: left; 
+} 
+#TreeList .input { 
+    font-size: 12px; 
+    line-height: 18px; 
+    color: #FFF; 
+    height: 16px; 
+    background-color: #3F6B8F; 
+    width: 120px; 
+    text-align: center; 
+    margin-top: 1px; 
+    border-top-width: 1px; 
+    border-right-width: 1px; 
+    border-bottom-width: 1px; 
+    border-left-width: 1px; 
+    border-top-style: solid; 
+    border-right-style: solid; 
+    border-bottom-style: solid; 
+    border-left-style: solid; 
+    border-top-color: #1F3547; 
+    border-right-color: #FFF; 
+    border-bottom-color: #FFF; 
+    border-left-color: #1F3547; 
+    float: left; 
+} 
+#TreeList .editBT { 
+    float: left; 
+    overflow: visible; 
+} 
+#TreeList .editBT .ok { 
+    background-image: url(/static/admin/img/bg.png); 
+    background-repeat: no-repeat; 
+    background-position: 0px -89px; 
+    height: 13px; 
+    width: 12px; 
+    float: left; 
+    margin-left: 3px; 
+    padding: 0px; 
+    margin-top: 3px; 
+    cursor: pointer; 
+} 
+#TreeList .editBT .cannel { 
+    background-image: url(/static/admin/img/bg.png); 
+    background-repeat: no-repeat; 
+    background-position: 0px -120px; 
+    float: left; 
+    height: 13px; 
+    width: 12px; 
+    margin-left: 3px; 
+    padding: 0px; 
+    margin-top: 3px; 
+    cursor: pointer; 
+} 
+
+#TreeList .editArea { 
+    float: right; 
+    color: #C3C3C3; 
+    cursor: pointer; 
+    margin-right: 6px; 
+} 
+
+#TreeList .editArea span { 
+    margin: 2px; 
+} 
+
+#TreeList .editArea .mouseOver { 
+    color: #BD4B00; 
+    border-top-width: 1px; 
+    border-right-width: 1px; 
+    border-bottom-width: 1px; 
+    border-left-width: 1px; 
+    border-top-style: solid; 
+    border-right-style: solid; 
+    border-bottom-style: solid; 
+    border-left-style: solid; 
+    border-top-color: #C9925A; 
+    border-right-color: #E6CFBB; 
+    border-bottom-color: #E6CFBB; 
+    border-left-color: #C9925A; 
+    background-color: #FFFFFF; 
+    margin: 0px; 
+    padding: 1px; 
+} 
+
+#TreeList .ParentNode .title { 
+    color: #314f6a; 
+    cursor: pointer; 
+    background-image: url(/static/admin/img/bg.png); 
+    background-repeat: no-repeat; 
+    padding-left: 39px; 
+} 
+
+#TreeList .ParentNode.show .title { 
+    font-weight: bold; 
+    background-position: 3px -27px; 
+} 
+
+#TreeList .ParentNode.hidden .title { 
+    background-position: 3px 4px; 
+} 
+
+#TreeList .ParentNode .editArea { 
+    color: #999;     
+} 
+#TreeList .ParentNode.show { 
+    background-color: #d1dfeb; 
+    border-top-width: 0px; 
+    border-right-width: 0px; 
+    border-bottom-width: 1px; 
+    border-left-width: 1px; 
+    border-top-style: solid; 
+    border-right-style: solid; 
+    border-bottom-style: solid; 
+    border-left-style: solid; 
+    border-top-color: #5d7b96; 
+    border-right-color: #5d7b96; 
+    border-bottom-color: #5d7b96; 
+    border-left-color: #5d7b96; 
+} 
+
+#TreeList .ParentNode.hidden { 
+    border-top-width: 0px; 
+    border-right-width: 0px; 
+    border-bottom-width: 1px; 
+    border-left-width: 0px; 
+    border-top-style: dashed; 
+    border-right-style: dashed; 
+    border-bottom-style: dashed; 
+    border-left-style: dashed; 
+    border-top-color: #aabdce; 
+    border-right-color: #aabdce; 
+    border-bottom-color: #aabdce; 
+    border-left-color: #aabdce; 
+} 
+
+#TreeList .Row { 
+    clear: both; 
+    margin-left: 24px; 
+    background-image: url(/static/admin/img/bg2.png); 
+    background-repeat: repeat-y; 
+    background-position: 7px 0px; 
+} 
