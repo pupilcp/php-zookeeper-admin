@@ -15,10 +15,12 @@ class Node extends CI_Controller {
 	 */
 	public function getlist()
 	{
-		include_once APPPATH . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'ZookeeperClient.php';
-		$zk = new ZookeeperClient('192.168.233.130:2181');
-				var_dump($zk);
+		//$this->load->helper('common');
+		loadService();
+		//$this->load->library('ZookeeperClient',['address' => '192.168.233.130:2181']);
+		//$zk = new ZookeeperClient('192.168.233.130:2181');
+			//	var_dump($zk);
 
-		echo '<pre>';var_dump($zk->getChildren('/'));
+		//echo '<pre>';var_dump($zk->getChildren('/'));
 	}
 }
