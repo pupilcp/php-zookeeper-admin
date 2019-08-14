@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>用户列表</title>
+    <title>节点列表</title>
     <link rel="stylesheet" href="/static/common/layui/css/layui.css">
     <link rel="stylesheet" href="/static/admin/css/style.css">
     <link rel="stylesheet" href="/static/admin/css/tree.css"/>
@@ -28,7 +28,6 @@
             </ul>
         </div>
     </header>
-
     <div class="main" id="app">
         <!--左栏-->
         <div class="left">
@@ -52,202 +51,44 @@
         <div class="right">
             <div class="layui-row">
                 <div  class="layui-col-lg4">
-                    <div class="layui-input-inline" style="width: 300px">
-                        <input type="text" name="path" value="/" placeholder="输入节点路径" class="layui-input key">
-                    </div>
-                    <button type="button" class="layui-btn sou">搜索</button>
+                    <form>
+                        <div class="layui-input-inline" style="width: 200px">
+                            <input type="text" name="path" value="<?=$nodePath?>" placeholder="输入节点路径" class="layui-input key"> 
+                        </div>
+                        <button type="submit" class="layui-btn sou">搜索</button>
+                    </form>
                 </div>
             </div>
             <hr/>
+            <div class="layui-row">
+                <div  class="layui-col-lg4">
+                    <div class="layui-input-inline" style="width: 200px">
+                        <?php if($nodeVal !== false): ?>
+                        当前搜索节点路径：<?=$nodePath?>
+                        <?php else: ?>
+                        <b style="color: red; font-size: 13px;">错误信息：节点路径 <?=$nodePath?> 不存在</b>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <?php if($nodeVal !== false): ?>
             <!-- tree begin -->
             <div id="TreeList"> 
-                <div class="ParentNode show"> 
-                    <div class="title">酷站欣赏</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                </div> 
-                <div class="Row"> 
-                  <div class="ChildNode"> 
-                    <div class="title">欧美酷站</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">日韩酷站</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">国内酷站</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">婚庆摄影</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">餐饮食品</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                </div> 
-                  <div class="ParentNode hidden"> 
-                  <div class="title">设计网址</div> 
-                  <div class="editBT"></div> 
-                  <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                </div> 
-                <div class="Row"> 
-                  <div class="ParentNode"> 
-                    <div class="title">综合设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="Row"> 
-                    <div class="ChildNode"> 
-                      <div class="title">Arting365</div> 
-                      <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">视觉中国</div> 
-                      <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">蓝色理想</div> 
-                      <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">网页设计师联盟</div> 
-                      <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">创意在线</div> 
-                      <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">视觉同盟</div> 
-                      <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                  </div> 
-                  <div class="ParentNode hidden"> 
-                    <div class="title">平面设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="Row"> 
-                    <div class="ChildNode"> 
-                      <div class="title">优艾网</div> 
-                      <div class="editBT"></div> 
-                      <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">中国设计网</div> 
-                      <div class="editBT"></div> 
-                      <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">设计酷</div> 
-                      <div class="editBT"></div> 
-                      <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                    <div class="ChildNode"> 
-                      <div class="title">平面设计在线</div> 
-                      <div class="editBT"></div> 
-                      <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                    </div> 
-                  </div> 
-                </div> 
-                  <div class="ParentNode show"> 
-                  <div class="title">设计欣赏</div> 
-                  <div class="editBT"></div> 
-                  <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                </div> 
-                <div class="Row"> 
-                  <div class="ChildNode"> 
-                    <div class="title">网页设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">UI设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">VI设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">Logo设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">广告设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">摄影艺术</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">工艺设计</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                </div> 
-                  <div class="ParentNode show"> 
-                  <div class="title">设计交流</div> 
-                  <div class="editBT"></div> 
-                  <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                </div> 
-              <div class="Row"> 
-                  <div class="ChildNode"> 
-                    <div class="title">设计理念</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">Photoshop教程</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">Flash教程</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">HTML/CSS教程</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                  <div class="ChildNode"> 
-                    <div class="title">JS/Jquery教程</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
-                  </div> 
-                <div class="ChildNode"> 
-                    <div class="title">SEO及建站推广</div> 
-                    <div class="editBT"></div> 
-                    <div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div> 
+
+                <div class="<?php if($childNum > 0): echo 'ParentNode'; endif;?> hidden">
+                    <div class="title" node-path="<?=$nodePath?>" node-name="<?=$nodeName?>" node-value="<?=$nodeVal?>"><?=$nodeName?></div>
+                    <div class="editBT"></div>
+                    <div class="editArea">
+                        <span>[编辑]</span><span></span><span>[添加]</span><span></span><span class="nodeDetail">[详细]</span>
+                    </div>
                 </div> 
             </div> 
-          </div> 
-        <!-- tree end -->
+            <!-- tree end -->
+            <?php endif; ?>
         </div>
     </div>
 </div>
+
 <script src="/static/admin/js/tree.js"></script>
 <script src="/static/admin/js/config.js"></script>
 <script src="/static/admin/js/script.js"></script>

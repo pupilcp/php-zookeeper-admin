@@ -16,7 +16,7 @@ body {
     margin-top: 6px; 
     margin-right: 9px; 
     margin-bottom: 6px; 
-    margin-left: 9px; 
+    #margin-left: 9px;
     border: 1px solid silver; 
     padding-bottom: 6px; 
     padding-left: 6px; 
@@ -31,6 +31,11 @@ body {
     margin-top: 2px; 
     clear: both; 
 } 
+
+#TreeList .ParentNode:hover,#TreeList .ChildNode:hover{
+    background-color: #d1dfeb;
+    color:#1aa094;
+}
 
 #TreeList .ChildNode { 
     background-image: url(/static/admin/img/bg.png); 
@@ -56,105 +61,105 @@ body {
     color: #314f6a; 
 } 
 
-#TreeList .title { 
-    float: left; 
-} 
-#TreeList .input { 
-    font-size: 12px; 
-    line-height: 18px; 
-    color: #FFF; 
-    height: 16px; 
-    background-color: #3F6B8F; 
-    width: 120px; 
-    text-align: center; 
-    margin-top: 1px; 
-    border-top-width: 1px; 
-    border-right-width: 1px; 
-    border-bottom-width: 1px; 
-    border-left-width: 1px; 
-    border-top-style: solid; 
-    border-right-style: solid; 
-    border-bottom-style: solid; 
-    border-left-style: solid; 
-    border-top-color: #1F3547; 
-    border-right-color: #FFF; 
-    border-bottom-color: #FFF; 
-    border-left-color: #1F3547; 
-    float: left; 
-} 
-#TreeList .editBT { 
-    float: left; 
-    overflow: visible; 
-} 
-#TreeList .editBT .ok { 
-    background-image: url(/static/admin/img/bg.png); 
-    background-repeat: no-repeat; 
-    background-position: 0px -89px; 
-    height: 13px; 
-    width: 12px; 
-    float: left; 
-    margin-left: 3px; 
-    padding: 0px; 
-    margin-top: 3px; 
-    cursor: pointer; 
-} 
-#TreeList .editBT .cannel { 
-    background-image: url(/static/admin/img/bg.png); 
-    background-repeat: no-repeat; 
-    background-position: 0px -120px; 
-    float: left; 
-    height: 13px; 
-    width: 12px; 
-    margin-left: 3px; 
-    padding: 0px; 
-    margin-top: 3px; 
-    cursor: pointer; 
-} 
+#TreeList .title {
+    float: left;
+}
+#TreeList .input {
+    font-size: 12px;
+    line-height: 14px;
+    color: #000;
+    height: 14px;
+    #background-color: #3F6B8F;
+    width: 120px;
+    text-align: center;
+    margin-top: 1px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-top-color: #1F3547;
+    border-right-color: #FFF;
+    border-bottom-color: #FFF;
+    border-left-color: #1F3547;
+    float: left;
+}
+#TreeList .editBT {
+    float: left;
+    overflow: visible;
+}
+#TreeList .editBT .ok {
+    background-image: url(/static/admin/img/bg.png);
+    background-repeat: no-repeat;
+    background-position: 0px -89px;
+    height: 13px;
+    width: 12px;
+    float: left;
+    margin-left: 3px;
+    padding: 0px;
+    margin-top: 3px;
+    cursor: pointer;
+}
+#TreeList .editBT .cannel {
+    background-image: url(/static/admin/img/bg.png);
+    background-repeat: no-repeat;
+    background-position: 0px -120px;
+    float: left;
+    height: 13px;
+    width: 12px;
+    margin-left: 3px;
+    padding: 0px;
+    margin-top: 3px;
+    cursor: pointer;
+}
 
-#TreeList .editArea { 
-    float: right; 
-    color: #C3C3C3; 
-    cursor: pointer; 
-    margin-right: 6px; 
-} 
+#TreeList .editArea {
+    float: right;
+    color: #C3C3C3;
+    cursor: pointer;
+    margin-right: 6px;
+}
 
-#TreeList .editArea span { 
-    margin: 2px; 
-} 
+#TreeList .editArea span {
+    margin: 2px;
+}
 
-#TreeList .editArea .mouseOver { 
-    color: #BD4B00; 
-    border-top-width: 1px; 
-    border-right-width: 1px; 
-    border-bottom-width: 1px; 
-    border-left-width: 1px; 
-    border-top-style: solid; 
-    border-right-style: solid; 
-    border-bottom-style: solid; 
-    border-left-style: solid; 
-    border-top-color: #C9925A; 
-    border-right-color: #E6CFBB; 
-    border-bottom-color: #E6CFBB; 
-    border-left-color: #C9925A; 
-    background-color: #FFFFFF; 
-    margin: 0px; 
-    padding: 1px; 
-} 
+#TreeList .editArea .mouseOver {
+    color: #BD4B00;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-top-color: #C9925A;
+    border-right-color: #E6CFBB;
+    border-bottom-color: #E6CFBB;
+    border-left-color: #C9925A;
+    background-color: #FFFFFF;
+    margin: 0px;
+    padding: 1px;
+}
 
-#TreeList .ParentNode .title { 
-    color: #314f6a; 
-    cursor: pointer; 
-    background-image: url(/static/admin/img/bg.png); 
-    background-repeat: no-repeat; 
-    padding-left: 39px; 
-} 
+#TreeList .ParentNode .title {
+    color: #314f6a;
+    cursor: pointer;
+    background-image: url(/static/admin/img/bg.png);
+    background-repeat: no-repeat;
+    padding-left: 39px;
+}
 
-#TreeList .ParentNode.show .title { 
-    font-weight: bold; 
-    background-position: 3px -27px; 
-} 
+#TreeList .ParentNode.show .title {
+    font-weight: bold;
+    background-position: 3px -27px;
+}
 
-#TreeList .ParentNode.hidden .title { 
+#TreeList .ParentNode.hidden .title {
     background-position: 3px 4px; 
 } 
 

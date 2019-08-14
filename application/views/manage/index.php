@@ -28,8 +28,8 @@
         <div class="breadcrumb">
             <i class="layui-icon">&#xe715;</i>
             <ul>
-                <li v-for="vo in address">
-                    <a v-text="vo.name" :href="vo.url" ></a> <span>/</span>
+                <li>
+                    <a href="/" >首页</a> <span>/</span>
                 </li>
             </ul>
 			<ul style="float:right;margin-right:30px;">

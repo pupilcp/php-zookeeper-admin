@@ -4,7 +4,12 @@ $(function(e) {
     var ChildNodeClass = 'ChildNode';//没有下级子节点的标识 
     var ChildrenListClass = 'Row';//子节点被包着的外层样式 
     var NewNodeName = '新建目录';//默认新建节点的名称 
-    var Orititle = 'Temptitle';//保存原来名称的属性名称 
+    var Orititle = 'Temptitle';//保存原来名称的属性名称
+    var getNodesInfoUrl = '/node/getNodesInfo';
+    var createNodeUrl = '/node/createNode';
+    var updateNodeUrl = '/node/updateNode';
+    var deleteNodeUrl = '/node/deleteNode';
+    var getNodeDetailUrl = '/node/getNodeDetail';
      
     var TModuleNode,TChildNode,TModuleNodeName; 
     TModuleNode = $('#TreeList .'+PrentNodeClass);//顶层节点 
@@ -19,53 +24,111 @@ $(function(e) {
     function EditHTML(NewName){ 
       var str = '<div class="title">' + NewName + '</div>'; 
       str    += '<div class="editBT"></div>'; 
-      str    += '<div class="editArea"><span>[编辑]</span><span>[添加同级目录]</span><span>[添加下级目录]</span><span>[删除]</span></div>'; 
+      str    += '<div class="editArea"><span>[编辑]</span><span></span><span>[添加]</span><span>[删除]</span></div>';
       return str; 
-    }     
+    }
+
+    //========================请求url==============================
+    function requestUrl(url, data, successCb, failCb, method, extendData){
+        $.ajax({
+            url: url,
+            data: data,
+            type: !method ? 'POST' : method,
+            dataType: 'json',
+            success: function(result) {
+                if(result.code == 1000 || result.code == 999){
+                    //成功
+                    successCb(result, extendData);
+                }else{
+                    //失败
+                    failCb(result);
+                }
+            },
+            error: function (e) {
+                alert('请求出现异常');
+                console.log(e);
+            },
+            complete: function () {
+
+            }
+        });
+    }
+
+    //==========================获取节点信息============================
+    function getNodesInfo(Obj){
+        requestUrl(getNodesInfoUrl,{'path': Obj.attr('node-path')}, getNodesInfoSuccessCb, reqFailCb, 'GET', {'Obj': Obj});
+    }
+    //==========================获取节点信息成功回调方法============================
+    function getNodesInfoSuccessCb(result, extendData){
+        var Obj = extendData.Obj;
+        var html = '<div class="Row NewRow">';
+        for (i in result.data){
+            var node = result.data[i];
+            html += '<div class="'+(node.childNum > 0 ? 'ParentNode hidden' : 'ChildNode')+'">';
+            html += '<div class="title" node-path="'+node.nodePath+'" node-name="'+node.nodeName+'" node-value="'+node.nodeVal+'">'+node.nodeName+'</div>';
+            html += '<div class="editBT"></div>';
+            html += '<div class="editArea"><span>[编辑]</span><span></span><span>[添加]</span><span>[删除]</span><span class="nodeDetail">[详细]</span></div>';
+            html += '</div>';
+        }
+        html += '</div>';
+        Obj.parent().removeClass('hidden').addClass('show');
+        Obj.parent().removeClass('ChildNode').addClass('ParentNode');
+        Obj.parent().after(html);
+        Obj.parent().next('.NewRow').find('.editArea').each(function(){
+            EditArea_Event($(this));
+        });
+    }
+    function reqFailCb(result){
+        alert(result.message);
+    }
      
-    //==========================树状展开收缩的效果============================ 
-    TModuleNodeName.click(function(){ 
-        TModuleNodeName_Click($(this)); 
-    }); 
-     
+    //==========================树状展开收缩的效果============================
+    $(document).on('click','#TreeList .ParentNode .title',function() {
+        TModuleNodeName_Click($(this));
+    });
     //-------------------------------(定义)---------------------------------- 
-    function TModuleNodeName_Click(Obj){ 
-        if(Obj.has('input').length==0){//非编辑模式下进行 
-          var tempNode = Obj.parent(); 
-          if(tempNode.hasClass('hidden')){ 
-              tempNode.removeClass('hidden').addClass('show'); 
-              if(tempNode.next().hasClass(ChildrenListClass)){ 
-                tempNode.next().css('display',''); 
-              } 
-          } 
-          else{ 
-              tempNode.removeClass('show').addClass('hidden'); 
-              if(tempNode.next().hasClass(ChildrenListClass)){ 
-                  tempNode.next().css('display','none'); 
-              } 
-          } 
+    function TModuleNodeName_Click(Obj,forceReq){
+        if(Obj.has('input').length==0){//非编辑模式下进行
+            var tempNode = Obj.parent();
+            if(tempNode.next('div.Row').length <= 0 || forceReq == 1){
+                //未请求过节点信息
+                getNodesInfo(Obj);
+            }else{
+              if(tempNode.hasClass('hidden')){  //当前在收缩状态
+                  tempNode.removeClass('hidden').addClass('show');
+                  if(tempNode.next().hasClass(ChildrenListClass)){
+                      tempNode.next().css('display','');
+                  }
+              }
+              else{ //当前在展开状态
+                  tempNode.removeClass('show').addClass('hidden');
+                  if(tempNode.next().hasClass(ChildrenListClass)){
+                      tempNode.next().css('display','none');
+                  }
+              }
+            }
         } 
     }     
     //==========================鼠标经过、离开节点的效果============================     
-    with(TModuleNode){ 
-      mouseover(function(){ 
-        TNode_MouseOver($(this)); 
-      }); 
+    // with(TModuleNode){ 
+    //   mouseover(function(){ 
+    //     TNode_MouseOver($(this)); 
+    //   }); 
        
-      mouseout(function(){ 
-        TNode_MouseOut($(this)); 
-      }); 
-    } 
+    //   mouseout(function(){ 
+    //     TNode_MouseOut($(this)); 
+    //   }); 
+    // } 
      
-    with(TChildNode){ 
-      mouseover(function(){ 
-        TNode_MouseOver($(this)); 
-      }); 
+    // with(TChildNode){ 
+    //   mouseover(function(){ 
+    //     TNode_MouseOver($(this)); 
+    //   }); 
        
-      mouseout(function(){ 
-        TNode_MouseOut($(this)); 
-      }); 
-    } 
+    //   mouseout(function(){ 
+    //     TNode_MouseOut($(this)); 
+    //   }); 
+    // } 
      
     //-------------------------------(定义)---------------------------------- 
     function TNode_MouseOver(Obj){ 
@@ -99,18 +162,18 @@ $(function(e) {
         }); 
        //-------------------------------------------------  
         Obj.children().each(function(index, element) { 
-            $(this).click(function(){ 
-              if($('#TreeList').has('input').length==0){ 
-                switch(index){ 
-                    case 0:    EditNode(objTitle,objTitle.html());break;//编辑 
-                    case 1:    AddNode(0,objParent,NewNodeRename(0,objTitle));break;//添加同级目录 
-                    case 2:    AddNode(1,objParent,NewNodeRename(1,objTitle));break;//添加下级目录 
-                    case 3:    DelNode(objParent);break;//删除 
-                } 
-              } 
-              else{ 
-                alert('请先取消编辑状态！');  
-              } 
+            $(this).click(function(){
+              if($('#TreeList').has('input').length==0){
+                switch(index){
+                    case 0:    break;//EditNode(objTitle,objTitle.html());break;//编辑
+                    case 1:    break;//AddNode(0,objParent,NewNodeRename(0,objTitle));break;//添加同级目录
+                    case 2:    break;//AddNode(1,objParent,NewNodeRename(1,objTitle));break;//添加下级目录
+                    case 3:    DelNode(objParent);break;//删除
+                }
+              }
+              else{
+                alert('请先取消编辑状态！');
+              }
             }); 
         }); 
     } 
@@ -142,7 +205,7 @@ $(function(e) {
           } 
            
           else{ 
-              alert('不能为空!'); 
+              alert('节点信息不能为空!'); 
               return false; 
           } 
         } 
@@ -196,43 +259,48 @@ $(function(e) {
     } 
      
     //=============================== 编辑定义 ================================ 
-    function EditNode(obj,text){ 
-        obj.attr(Orititle,text);//将原来的text保存到Orititle中 
-        obj.html("<input type='text' class=input value=" + text + ">");//切换成编辑模式 
+    function EditNode(obj, text, newNode){
+        obj.attr(Orititle,text);//将原来的text保存到Orititle中
+        var nodeName = "<a style='float:left;'>"+obj.attr('node-name')+"&nbsp;</a>";
+        var nodeValue = obj.attr('node-value');
+        if(newNode == 1){ //添加
+            nodeName = "<input type='text' class='input nodeName' placeholder='节点名称' value=''>";
+            nodeValue = '';
+        }
+        obj.html(nodeName + "<input type='text' class='input nodeValue' placeholder='节点值' value=" + nodeValue + ">");//切换成编辑模式
         obj.parent().find('.editBT').html("<div class=ok title=确定></div><div class=cannel title=取消></div>"); 
-        obj.has('input').children().first().focusEnd();//聚焦到编辑框内 
+        obj.has('input').children().first().focusEnd();//聚焦到编辑框内
    
         obj.parent().find('.ok').click(function(){ 
-            Edit_OK(obj); 
+            Edit_OK(obj, newNode);
         }); 
          
         obj.parent().find('.cannel').click(function(){ 
-            Edit_Cannel(obj); 
+            Edit_Cannel(obj, newNode);
         }); 
     } 
-     
-    //=============================== 添加节点 ================================ 
-    function AddNode(tag,obj,NameStr){ 
-        if(tag==0 || tag==1){ 
-          var newNode = $('<div class=' + ChildNodeClass + '></div>'); 
-          if(tag==0){//添加同级目录 
-            newNode.appendTo(obj.parent()); 
+
+    function getNodesInfoSuccessCbAdd(result,extendData){
+          
+          var obj = extendData.Obj.parent();
+          var newNode = $('<div class=' + ChildNodeClass + '></div>');  
+          if(!obj.next() || !obj.next().hasClass('Row')){//最后一个节点和class含有ChildrenListClass都表示没有子节点
+              if(result.code == 1000){
+                  getNodesInfoSuccessCb(result,extendData);
+              }else{
+                  var ChildrenList = $('<div class=' + ChildrenListClass + '></div>');
+                  ChildrenList.insertAfter(obj);//将子节点的”外壳“加入到对象后面
+                  newNode.appendTo(ChildrenList);//将子节点加入到”外壳“内 
+              }
+              newNode.appendTo(obj.next());//将子节点加入到”外壳“内 
           } 
-          else{//添加下级目录 
-            if(!(obj.next()) || (obj.next().attr('class')!=ChildrenListClass)){//最后一个节点和class!=ChildrenListClass都表示没有子节点 
-                var ChildrenList = $('<div class=' + ChildrenListClass + '></div>'); 
-                ChildrenList.insertAfter(obj);//将子节点的”外壳“加入到对象后面 
-                newNode.appendTo(ChildrenList);//将子节点加入到”外壳“内 
-            } 
-            else{ 
-                newNode.appendTo(obj.next());//将子节点加入到”外壳“内 
-            } 
-            obj.attr('class',PrentNodeClass + ' show');//激活父节点展开状态模式 
-            obj.next().css('display','');//展开子节点列表 
+          else{ 
+              newNode.appendTo(obj.next());//将子节点加入到”外壳“内 
           } 
-           
+          obj.attr('class',PrentNodeClass + ' show');//激活父节点展开状态模式 
+          obj.next().css('display','');//展开子节点列表 
           with(newNode){ 
-              html(EditHTML(NameStr)); 
+              html(EditHTML(extendData.nameStr)); 
               //---------------------------------动态添加事件------------------------------- 
               mouseover(function(){ 
                 TNode_MouseOver($(this)); 
@@ -251,40 +319,93 @@ $(function(e) {
               }); 
               //--------------------------------------------------------------------------- 
           } 
-          EditNode(newNode.find('.title'),newNode.find('.title').html());//添加后自动切换到编辑状态 
+          EditNode(newNode.find('.title'),newNode.find('.title').html(), 1);//添加后自动切换到编辑状态
+    }
+     
+    //=============================== 添加 ================================ 
+    function AddNode(tag,obj,nameStr){ 
+        if(tag==0 || tag==1){ 
+          var currentObj = obj.find('div.title');
+          requestUrl(getNodesInfoUrl,{'path': currentObj.attr('node-path')}, getNodesInfoSuccessCbAdd, reqFailCb, 'GET', 
+              {'Obj': currentObj,'nameStr': nameStr});
         } 
     } 
      
     //=============================== [删除]按钮 ================================ 
-    function DelNode(obj){ 
+    function DelNode(obj){ //childNode
         if(confirm('确定要删除吗？')){ 
-            var objParent = obj.parent(); 
-            var objChildren = obj.next('.Row'); 
-            obj.remove();//基于Jquery是利用析构函数，所以“删除”后其相关属性仍然存在，除非针对ID来操作就可以彻底删除 
-            objChildren.remove();//删除对象所有子节点 
-            ChangeParent(objParent); 
+            requestUrl(deleteNodeUrl,{'path': obj.find('.title').attr('node-path')}, function(result,extendData){
+                var objParent = obj.parent(); 
+                var objChildren = obj.next('.Row'); 
+                obj.remove();//基于Jquery是利用析构函数，所以“删除”后其相关属性仍然存在，除非针对ID来操作就可以彻底删除 
+                objChildren.remove();//删除对象所有子节点 
+                ChangeParent(objParent); 
+            }, reqFailCb, 'POST', {'obj': obj});
         } 
     } 
      
     //=============================== 编辑[确定]按钮 ================================ 
-    function Edit_OK(obj){ 
-        var tempText = obj.has('input').children().first().val(); 
-         
-        if(CheckEdititon(obj,tempText)){ 
-          obj.html(tempText); 
+    function Edit_OK(obj, newNode){
+        var nodeValue = $.trim(obj.find('input.nodeValue').val());
+        if(CheckEdititon(obj,nodeValue)){
+            //校验通过
+            var nodeName = $.trim(obj.attr('node-name'));
+            var nodePath = '';
+            if(newNode == 1){
+              //新增节点
+              nodeName = obj.find('input.nodeName').val();
+              pNodePath = obj.parent().parent().prev().find('.title').attr('node-path');
+              nodePath = (pNodePath == '/' ? '' : pNodePath) + '/' + nodeName;
+              //请求创建节点
+              var extendData = {'obj': obj,'nodePath':nodePath,'nodeValue':nodeValue,'nodeName':nodeName};
+              requestUrl(createNodeUrl,{'path': nodePath, 'val': nodeValue},function(result,extendData){
+                  var obj = extendData.obj;
+                  obj.html(nodeName + ': ' + nodeValue);
+                  obj.attr('node-value', nodeValue);
+                  obj.attr('node-name', nodeName);
+                  obj.attr('node-path', nodePath);
+                  obj.parent().find('.editBT').html(''); 
+              },reqFailCb,'POST',extendData);
+            }else{
+              //编辑节点
+              nodePath = obj.attr('node-path');
+              //请求更新节点
+              var extendData = {'obj': obj,'nodePath':nodePath,'nodeValue':nodeValue,'nodeName':nodeName};
+              requestUrl(updateNodeUrl,{'path': nodePath, 'val': nodeValue},function(result,extendData){
+                  var obj = extendData.obj;
+                  obj.html(nodeName + ': ' + nodeValue);
+                  obj.attr('node-value', nodeValue);
+                  obj.attr('node-name', nodeName);
+                  obj.attr('node-path', nodePath);
+                  obj.parent().find('.editBT').html(''); 
+              },reqFailCb,'POST',extendData);
+            }
+        }
+        else{
+            if(newNode == 1){
+                return false;
+            }
+            obj.html(obj.attr('node-name') + ': ' + obj.attr('node-value'));
+            obj.removeAttr(Orititle); 
+            obj.parent().find('.editBT').html(''); 
         } 
-        else{ 
-          obj.html(obj.attr(Orititle));   
-        } 
-        obj.removeAttr(Orititle); 
-        obj.parent().find('.editBT').html(''); 
     } 
      
     //=============================== 编辑[取消]按钮 ================================ 
-    function Edit_Cannel(obj){ 
-        obj.html(obj.attr(Orititle)); 
-        obj.removeAttr(Orititle); 
-        obj.parent().find('.editBT').html(''); 
+    function Edit_Cannel(obj, newNode){
+        if(newNode == 1){
+            var pObj = obj.parent('.ChildNode').parent();
+            if(pObj.children().length <= 1){ //子节点为空
+                pObj.prev('.ParentNode').removeClass('ParentNode').addClass('ChildNode');
+                pObj.remove();
+            }else{
+                obj.parent('.ChildNode').remove();
+            }         
+        }else{
+            obj.html(obj.attr('node-name') + ': ' + obj.attr('node-value'));
+            obj.removeAttr(Orititle);
+            obj.parent().find('.editBT').html('');
+        }
     } 
      
     //=============================== 改变父节点样式 ================================ 
@@ -323,9 +444,195 @@ $(function(e) {
     }   
        
     $.fn.focusEnd = function(){ 
-        this.setCursorPosition(this.val().length);   
+        this.setCursorPosition(this.val().length);
     } 
      
-    //========================================================================================= 
-     
+    //查看节点详细信息========================================================================================= 
+    layui.use('layer',function(){
+        var layer=layui.layer;
+        $(document).on('click','span.nodeDetail',function(){
+              
+        });
+    });
+
+    //点击编辑/添加，弹出编辑框
+    layui.use('layer',function(){
+        var layer=layui.layer;
+        $(document).on('click','div.editArea span',function(){
+              var spanIndex = $(this).index();
+              var node = $(this).parent().parent().find('.title');
+              var nodePath = node.attr('node-path');
+              if(spanIndex == 0){
+                  updateNode(layer,nodePath);
+              }else if(spanIndex == 2){
+                  createNode(layer, nodePath, node);
+              }else if(spanIndex == 4){
+                  getNodeDetail(layer,nodePath);
+              }
+        });
+    });
+
+    //获取节点详情
+    function getNodeDetail(layer,path){
+        $.ajax({
+          url: getNodeDetailUrl,
+          data: {path: path},
+          type: 'GET',
+          dataType: 'json',
+          success: function(result) {
+              if(result.code == 1000){
+                  //成功
+                  var content = '<p><b style="color:#009688;">[nodePath]:</b> ' + path + '</p>';
+                  for(i in result.data){
+                      content += '<p><b style="color:#009688;">[' + i + ']:</b> ' + result.data[i] + '</p>';
+                  }
+                  layer.open({
+                      title: '节点信息',
+                      type:0,
+                      area:['300px', 'auto'],
+                      btn:[],
+                      skin:'layui-layer-rim',
+                      content:content,
+                      offset: '200px',
+                      shadeClose: true,
+                  });
+              }else{
+                  //失败
+                  layer.msg(result.message);
+              }
+          },
+          error: function (e) {
+              layer.msg('请求出现异常');
+              console.log(e);
+          }
+      });
+    }
+
+    //创建节点
+    function createNode(layer,nodePath, node){
+        layer.open({
+            id:'createLayer',
+            type: 1,
+            title:'添加节点',
+            skin:'layui-layer-rim',
+            area:['450px', 'auto'],
+            content: 
+                  '<div style="margin-left: 18px;margin-top:20px;font-size:13px;">'
+                  +'<div>'
+                  +'<span>父级路径：'+nodePath+'</span>'
+                  +'</div>'
+                  +'<div style="margin-top:10px;">'
+                  +'<span>节点名称：</span>'
+                  +'<input type="text" name="nodeName" value="" style="padding:2px;"/>'
+                  +'</div>'
+                  +'<div style="margin-top:10px;">'
+                  +'<span>节点属性：</span>'
+                  +'<label><input type="checkbox" name="nodeAttr" value="1" style="vertical-align:middle;margin-bottom:2px;"/> 序列化</label>'
+                  +'</div>'
+                  +'<div style="margin-top:10px;">'
+                  +'<span>节点内容：</span>'
+                  +'<textarea rows="10" cols="40" style="vertical-align: top; padding:3px; font-size:13px;"></textarea>'
+                  +'</div>'
+                  +'</div>'
+            ,
+            btn:['保存','取消'],
+            btn1: function (index,layero) {
+                var nodeVal = $.trim($('#createLayer textarea').val());
+                var nodeName = $.trim($('#createLayer input[name="nodeName"]').val());
+                var nodeAttr = 0;
+                if(!nodeName){
+                    layer.msg('请输入节点名称');
+                    return false;
+                }
+                if(!nodeVal){
+                    layer.msg('请输入节点内容');
+                    return false;
+                }
+                if($('#createLayer input[name="nodeAttr"]').is(':checked')){
+                    nodeAttr = 1;
+                }
+                $.ajax({
+                  url: createNodeUrl,
+                  data: {path: ((nodePath == '/' ? '' : nodePath) + '/' + nodeName), val: nodeVal, attr: nodeAttr},
+                  type: 'POST',
+                  dataType: 'json',
+                  success: function(result) {
+                      layer.close(index);
+                      //触发请求父级节点列表
+                      TModuleNodeName_Click(node, 1);
+                  },
+                  error:function(){
+                    layer.msg('请求出现异常');
+                    console.log(e);
+                  }
+                });
+            },
+            btn2:function (index,layero) {
+                 layer.close(index);
+            }
+      });
+    }
+
+    //更新节点
+    function updateNode(layer,nodePath){
+        $.ajax({
+          url: getNodeDetailUrl,
+          data: {path: nodePath},
+          type: 'GET',
+          dataType: 'json',
+          success: function(result) {
+              if(result.code == 1000){
+                  layer.open({
+                      id:'updateLayer',
+                      type: 1,
+                      title:'修改节点',
+                      skin:'layui-layer-rim',
+                      area:['450px', 'auto'],
+                      content: 
+                            '<div style="margin-left: 18px;margin-top:20px;font-size:13px;">'
+                            +'<div>'
+                            +'<span>节点路径：'+nodePath+'</span>'
+                            +'</div>'
+                            +'<div style="margin-top:10px;">'
+                            +'<span>节点内容：</span>'
+                            +'<textarea rows="10" cols="40" style="vertical-align: top; padding:3px; font-size:13px;">'+result.data.nodeVal+'</textarea>'
+                            +'</div>'
+                            +'</div>'
+                      ,
+                      btn:['保存','取消'],
+                      btn1: function (index,layero) {
+                          var nodeVal = $('#updateLayer textarea').val();
+                          if(!nodeVal){
+                              layer.msg('请输入节点内容');
+                              return false;
+                          }
+                          $.ajax({
+                            url: updateNodeUrl,
+                            data: {path: nodePath, val: nodeVal},
+                            type: 'POST',
+                            dataType: 'json',
+                            success: function(result) {
+                                 layer.close(index);
+                            },
+                            error:function(){
+                              layer.msg('请求出现异常');
+                              console.log(e);
+                            }
+                          });
+                      },
+                      btn2:function (index,layero) {
+                           layer.close(index);
+                      }
+                });
+              }else{
+                  //失败
+                  layer.msg(result.message);
+              }
+          },
+          error: function (e) {
+              layer.msg('请求出现异常');
+              console.log(e);
+          }
+      });
+    }
 }); 
