@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>用户列表</title>
+    <title>角色列表</title>
     <link rel="stylesheet" href="/static/common/layui/css/layui.css">
     <link rel="stylesheet" href="/static/admin/css/style.css">
     <script src="/static/common/layui/layui.js"></script>
@@ -51,7 +53,7 @@
                 <div  class="layui-col-lg4">
                     <form>
                     <div class="layui-input-inline">
-                        <input type="text" name="keyword" value="<?=$keyword?>" placeholder="用户名/邮箱" class="layui-input key">
+                        <input type="text" name="keyword" value="<?=$keyword?>" placeholder="角色名" class="layui-input key">
                     </div>
                     <button type="submit" class="layui-btn sou">搜索</button>
                     </form>
@@ -63,32 +65,34 @@
                 <thead>
                 <tr>
                     <th>NO</th>
-                    <th>用户名</th>
-                    <th>邮箱</th>
-                    <th>角色</th>
+                    <th>角色名</th>
                     <th>状态</th>
-                    <th>注册时间</th>
-                    <th>登录时间</th>
+                    <th>创建时间</th>
+                    <th>更新时间</th>
                     <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php if(!empty($users)):?>
-                <?php foreach($users as $key => $user):?>
+                <?php if(!empty($roles)):?>
+                <?php foreach($roles as $key => $role):?>
                 <tr>
                     <td><?=($page-1)*$pageSize+$key+1;?></td>
-                    <td><?=$user['username'];?></td>
-                    <td><?=$user['email'];?></td>
-                    <td><?=isset($roles[$user['role_id']])?$roles[$user['role_id']]['role_name']:''?></td>
-                    <td><?=$user['is_active']==1?'启用':'<span style="color:red">禁用</span>';?></td>
-                    <td><?=$user['create_time']?date('Y-m-d H:i:s',$user['create_time']):'';?></td>
-                    <td><?=$user['login_time']?date('Y-m-d H:i:s',$user['login_time']):'';?></td>
+                    <td><?=$role['role_name'];?></td>
+                    <td><?=$role['is_active']==1?'启用':'<span style="color:red">禁用</span>';?></td>
+                    <td><?=$role['create_time']?date('Y-m-d H:i:s',$role['create_time']):'';?></td>
+                    <td><?=$role['update_time']?date('Y-m-d H:i:s',$role['update_time']):'';?></td>
                     <td>
-                        <?php if(checkAcl('user_update')):?><a href="/user/update?id=<?=$user['id']?>">编辑</a><?php endif;?>
-                        <?php if(checkAcl($user['is_active']==0 ? 'user_active' : 'user_forbid')):?>
-                        <a href="javascript:;" data-username="<?=$user['username']?>" data-uid="<?=$user['id']?>" data-status="<?=$user['is_active']?>" class="user-active"><?=$user['is_active']==0?'启用':'禁用';?></a>
+                        <?php if($role['role_name'] != ADMINISTRATOR_ROLE):?>
+                            <?php if(checkAcl('role_update')):?>
+                            <a href="/role/update?id=<?=$role['id']?>">编辑</a>
+                            <?php endif;?>
+                            <?php if(checkAcl($role['is_active']==0 ? 'role_active' : 'role_forbid')):?>
+                            <a href="javascript:;" data-rolename="<?=$role['role_name']?>" data-roleid="<?=$role['id']?>" data-status="<?=$role['is_active']?>" class="role-active"><?=$role['is_active']==0?'启用':'禁用';?></a>  
+                            <?php endif;?>    
+                            <?php if(checkAcl('role_delete')):?>      
+                            <a href="javascript:;" data-rolename="<?=$role['role_name']?>" data-roleid="<?=$role['id']?>" class="role-delete">删除</a>
+                            <?php endif;?>
                         <?php endif;?>
-                        <?php if(checkAcl('user_delete')):?><a href="javascript:;" data-username="<?=$user['username']?>" data-uid="<?=$user['id']?>" class="user-delete">删除</a><?php endif;?>
                     </td>
                 </tr>
                 <?php endforeach;?>
@@ -105,6 +109,6 @@
 </div>
 <script src="/static/admin/js/config.js"></script>
 <script src="/static/admin/js/script.js"></script>
-<script src="/static/admin/js/user.js"></script>
+<script src="/static/admin/js/role.js"></script>
 </body>
 </html>

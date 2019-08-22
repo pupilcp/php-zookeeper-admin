@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -28,15 +27,11 @@
         <div class="breadcrumb">
             <i class="layui-icon">&#xe715;</i>
             <ul>
-                <li v-for="vo in address">
-                    <a v-text="vo.name" :href="vo.url" ></a> <span>/</span>
+                <li>
+                    <a href="javascript:;" >首页</a> <span>/</span>
                 </li>
             </ul>
-			<ul style="float:right;margin-right:30px;">
-				<li>您好，美女！</li>
-				<li>  <i class="layui-icon arrow">&#xe65c;</i></li>
-				<li>退出登录</li>
-			</ul>
+			<?php $this->load->view('public/userinfo');?>
         </div>
     </header>
 
@@ -62,9 +57,7 @@
         <!--右侧-->
         <div class="right">
             <blockquote class="layui-elem-quote">
-                <h2>zkadmin管理系统 - zookeeper节点管理</h2>
-                <p>轻松操作zookeeper</p>
-                <p><?=date('Y-m-d H:i:s')?></p>
+                <h2>Forbidden Access 403</h2>
             </blockquote>
         </div>
     </div>

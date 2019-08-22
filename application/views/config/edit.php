@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title><?=isset($id)?'编辑':'添加';?>用户</title>
+    <title><?=isset($id)?'编辑':'添加';?>配置</title>
     <link rel="stylesheet" href="/static/common/layui/css/layui.css">
     <link rel="stylesheet" href="/static/admin/css/style.css">
     <script src="/static/common/layui/layui.js"></script>
@@ -24,7 +24,7 @@
                 </li>
             </ul>
             <?php else:?>
-            <ul><li><a href="/manage/index">首页</a> <span>/</span></li><li><a href="/user/index">用户管理</a> <span>/</span></li><li><a href="javascript:;">编辑用户</a> <span>/</span></li></ul>
+            <ul><li><a href="/manage/index">首页</a> <span>/</span></li><li><a href="/config/index">配置管理</a> <span>/</span></li><li><a href="javascript:;">编辑配置</a> <span>/</span></li></ul>
             <?php endif;?>
             <?php $this->load->view('public/userinfo');?>
         </div>
@@ -36,52 +36,34 @@
         <!--右侧-->
         <div class="right">
             <fieldset class="layui-elem-field layui-field-title">
-                <legend><?=isset($id)?'编辑':'添加';?>用户</legend>
+                <legend><?=isset($id)?'编辑':'添加';?>配置</legend>
             </fieldset>
 
 
             <form class="layui-form " action="" method="POST">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">用户名</label>
+                    <label class="layui-form-label">配置名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="name" lay-verify="name" <?=isset($username)?'disabled':''?> value="<?=$username??'';?>" maxlength="20" placeholder="不超过20个字符" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">密码</label>
-                    <div class="layui-input-block">
-                        <input type="password" name="pwd" lay-verify="pwd" placeholder="<?=isset($id) ? '密码留空不作修改' : '不少于8个字符'?>" autocomplete="off" class="layui-input">
+                        <input type="text" name="name" <?=isset($name)?'disabled':''?> lay-verify="name" value="<?=$name??'';?>" maxlength="30" placeholder="由英文字母/数字/下划线组成，不超过30个字符" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
+                    <label class="layui-form-label">配置内容</label>
                     <div class="layui-input-block">
-                        <input type="text" name="email" lay-verify="required|email" value="<?=$email??'';?>" placeholder="" autocomplete="off" class="layui-input">
+                        <textarea name="content" placeholder="请输入配置内容" class="layui-textarea" lay-verify="required"><?=$content??'';?></textarea>
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">所属角色</label>
+                    <label class="layui-form-label">配置描述</label>
                     <div class="layui-input-block">
-                        <select name="role" lay-verify="role">
-                            <option value="0">请选择角色</option>
-                            <?php foreach($roles as $role):?>
-                            <option value="<?=$role['id'];?>" <?=(isset($role_id) && $role_id==$role['id']) ?'selected' : '';?>><?=$role['role_name'];?></option>
-                            <?php endforeach;?>
-                        </select>   
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">是否启用</label>
-                    <div class="layui-input-block">
-                        <input type="checkbox" value="1" name="state" lay-text="启用|禁用" <?=(!isset($is_active) ||$is_active==1) ?'checked' : '';?> lay-skin="switch">
+                        <textarea name="intro" placeholder="不超过100个字符" class="layui-textarea" maxlength="100" lay-verify="intro"><?=$intro??'';?></textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <input type="hidden" name="userId" id="userId" value="<?=$id??0;?>" />
+                        <input type="hidden" name="configId" id="configId" value="<?=$id??0;?>" />
                         <button class="layui-btn" lay-submit lay-filter="submit">保存</button>
                     </div>
                 </div>
@@ -99,30 +81,27 @@
         var layer = layui.layer;
         var verifyObj = {   
             name : function(value) {
-                if (value.length > 20) {
-                    return '用户名不能超过20个字符';
+                if (value.length > 30) {
+                    return '配置名不能超过30个字符';
                 }else if(value.length <= 0){
-                    return '用户名不能为空';
+                    return '配置名不能为空';
+                }else if(!value.match(/^[\w_]+$/)){
+                    return '配置名由英文字母/数字/下划线组成';
                 }
             },
-            role : function(value) {
-                if (value <= 0) {
-                    return '请选择角色';
+            intro : function(value) {
+                if (value.length > 100) {
+                    return '配置描述不能超过100个字符';
+                }else if(value.length <= 0){
+                    return '配置描述不能为空';
                 }
             }
         };
-        if($('#userId').val() <= 0){
-            verifyObj.pwd = function(value) {
-                if (value.length < 8) {
-                    return '至少输入8个字符';
-                }
-            }
-        }
         form.verify(verifyObj);
         form.on('submit(submit)', function(data) {   
-            var url = '/user/create';
-            if(data.field.userId > 0){
-                url = '/user/update';
+            var url = '/config/create';
+            if(data.field.configId > 0){
+                url = '/config/update';
             }
             $.ajax({
                 type : 'POST',
@@ -135,7 +114,7 @@
                     }else{
                         layer.msg('保存成功');
                         setTimeout(function(){
-                            location.href = '/user/index';
+                            location.href = '/config/index';
                         },1000);
                     }
                 },

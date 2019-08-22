@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -26,27 +25,12 @@
                     <a  v-text="vo.name" :href="vo.url" ></a> <span>/</span>
                 </li>
             </ul>
+            <?php $this->load->view('public/userinfo');?>
         </div>
     </header>
-    <div class="main" id="app">
+    <div class="main" style="font-size: 13px;">
         <!--左栏-->
-        <div class="left">
-            <ul class="cl" >
-                <!--顶级分类-->
-                <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
-                    <a href="javascript:;"  :class="{active:vo.active}"  @click="onActive(index)">
-                        <i class="layui-icon" v-html="vo.icon"></i>
-                        <span v-text="vo.name"></span>
-                        <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active" class="layui-icon active">&#xe623;</i>
-                    </a>
-                    <!--子级分类-->
-                    <div v-for="vo2,index2 in vo.list">
-                        <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)" v-text="vo2.name"></a>
-                        <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
-                    </div>
-                </li>
-            </ul>
-        </div>
+        <?php $this->load->view('public/menu');?>
         <!--右侧-->
         <div class="right">
             <div class="layui-row">
@@ -79,7 +63,17 @@
                     <div class="title" node-path="<?=$nodePath?>" node-name="<?=$nodeName?>" node-value="<?=$nodeVal?>"><?=$nodeName?></div>
                     <div class="editBT"></div>
                     <div class="editArea">
-                        <span>[编辑]</span><span></span><span>[添加]</span><span></span><span class="nodeDetail">[详细]</span>
+                        <?php if(checkAcl('node_updatenode')):?>
+                        <span>[编辑]</span>
+                        <?php endif;?>
+                        <span></span>
+                        <?php if(checkAcl('node_createnode')):?>
+                        <span>[添加]</span>
+                        <?php endif;?>
+                        <span></span>
+                        <?php if(checkAcl('node_index')):?>
+                        <span class="nodeDetail">[详细]</span>
+                        <?php endif;?>
                     </div>
                 </div> 
             </div> 
@@ -88,7 +82,9 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript">
+    var actionAcl = <?=json_encode($actionAcl);?>;
+</script>
 <script src="/static/admin/js/tree.js"></script>
 <script src="/static/admin/js/config.js"></script>
 <script src="/static/admin/js/script.js"></script>

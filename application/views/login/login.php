@@ -12,19 +12,19 @@
 
 <body id="login">
 <div class="login">
-    <h2>zkadmin管理系统</h2>
+    <h2>Zookeeper管理系统</h2>
     <form class="layui-form" method="post" target="_blank" action="">
         <div class="layui-form-item">
-            <input type="username" name="user" placeholder="用户名" class="layui-input">
+            <input type="username" name="uname" placeholder="用户名" class="layui-input" lay-verify="required" />
             <i class="layui-icon input-icon">&#xe66f;</i>
         </div>
         <div class="layui-form-item">
-            <input type="password" name="pwd" placeholder="密码"  class="layui-input">
+            <input type="password" name="pwd" placeholder="密码"  class="layui-input"  lay-verify="required" />
             <i class="layui-icon input-icon">&#xe673;</i>
         </div>
-        <div class="layui-form-item">
+        <!-- <div class="layui-form-item">
             <input type="checkbox" name="box" lay-skin="primary" title="记住密码" checked=""> <a class="back" href="javascript:;"  style="margin-top: 10px">忘记密码</a>
-        </div>
+        </div> -->
         <div class="layui-form-item">
             <button style="width: 100%" class="layui-btn" lay-submit lay-filter="login">立即登录</button>
 
@@ -36,10 +36,10 @@
                 layer = layui.layer,
                 $ = layui.jquery;
             form.on('submit(login)', function (data) {
-                $.post("<?=base_url('login/signin');?>",data.field,function(res){
+                $.post('/login/signin',data.field,function(res){
                     if(res.code == 1000){
-                        layer.msg(res.message, {time: 2000, end: function(){
-                                window.location.href = "<?=base_url('manage/index');?>";
+                        layer.msg(res.message, {time: 1000, end: function(){
+                                window.location.href = '/manage/index';
                             }});
                     }else{
                         layer.msg(res.message, {time: 2000});

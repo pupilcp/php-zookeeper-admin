@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -29,14 +28,10 @@
             <i class="layui-icon">&#xe715;</i>
             <ul>
                 <li>
-                    <a href="/" >首页</a> <span>/</span>
+                    <a href="javascript:;" >首页</a> <span>/</span>
                 </li>
             </ul>
-			<ul style="float:right;margin-right:30px;">
-				<li>您好，美女！</li>
-				<li>  <i class="layui-icon arrow">&#xe65c;</i></li>
-				<li>退出登录</li>
-			</ul>
+			<?php $this->load->view('public/userinfo');?>
         </div>
     </header>
 
@@ -63,8 +58,10 @@
         <div class="right">
             <blockquote class="layui-elem-quote">
                 <h2>zkadmin管理系统 - zookeeper节点管理</h2>
-                <p>轻松操作zookeeper</p>
-                <p><?=date('Y-m-d H:i:s')?></p>
+                <ul>
+                    <li>-- 轻松对zookeeper节点数据进行增删改查</li>
+                    <li>-- 完善的用户角色管理权限</li>
+                </ul>
             </blockquote>
         </div>
     </div>

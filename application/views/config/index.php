@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>用户列表</title>
+    <title>配置列表</title>
     <link rel="stylesheet" href="/static/common/layui/css/layui.css">
     <link rel="stylesheet" href="/static/admin/css/style.css">
     <script src="/static/common/layui/layui.js"></script>
@@ -51,7 +51,7 @@
                 <div  class="layui-col-lg4">
                     <form>
                     <div class="layui-input-inline">
-                        <input type="text" name="keyword" value="<?=$keyword?>" placeholder="用户名/邮箱" class="layui-input key">
+                        <input type="text" name="keyword" value="<?=$keyword?>" placeholder="配置名/描述" class="layui-input key">
                     </div>
                     <button type="submit" class="layui-btn sou">搜索</button>
                     </form>
@@ -63,32 +63,30 @@
                 <thead>
                 <tr>
                     <th>NO</th>
-                    <th>用户名</th>
-                    <th>邮箱</th>
-                    <th>角色</th>
-                    <th>状态</th>
-                    <th>注册时间</th>
-                    <th>登录时间</th>
+                    <th>配置名</th>
+                    <th>配置内容</th>
+                    <th>配置描述</th>
+                    <th>创建时间</th>
+                    <th>更新时间</th>
+                    <th>更新人</th>
                     <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php if(!empty($users)):?>
-                <?php foreach($users as $key => $user):?>
+                <?php if(!empty($configs)):?>
+                <?php foreach($configs as $key => $config):?>
                 <tr>
                     <td><?=($page-1)*$pageSize+$key+1;?></td>
-                    <td><?=$user['username'];?></td>
-                    <td><?=$user['email'];?></td>
-                    <td><?=isset($roles[$user['role_id']])?$roles[$user['role_id']]['role_name']:''?></td>
-                    <td><?=$user['is_active']==1?'启用':'<span style="color:red">禁用</span>';?></td>
-                    <td><?=$user['create_time']?date('Y-m-d H:i:s',$user['create_time']):'';?></td>
-                    <td><?=$user['login_time']?date('Y-m-d H:i:s',$user['login_time']):'';?></td>
+                    <td><?=$config['name'];?></td>
+                    <td><?=$config['content'];?></td>
+                    <td><?=$config['intro'];?></td>
+                    <td><?=$config['create_time']?date('Y-m-d H:i:s',$config['create_time']):'';?></td>
+                    <td><?=$config['update_time']?date('Y-m-d H:i:s',$config['update_time']):'';?></td>
+                    <td><?=$config['update_user'];?></td>
                     <td>
-                        <?php if(checkAcl('user_update')):?><a href="/user/update?id=<?=$user['id']?>">编辑</a><?php endif;?>
-                        <?php if(checkAcl($user['is_active']==0 ? 'user_active' : 'user_forbid')):?>
-                        <a href="javascript:;" data-username="<?=$user['username']?>" data-uid="<?=$user['id']?>" data-status="<?=$user['is_active']?>" class="user-active"><?=$user['is_active']==0?'启用':'禁用';?></a>
-                        <?php endif;?>
-                        <?php if(checkAcl('user_delete')):?><a href="javascript:;" data-username="<?=$user['username']?>" data-uid="<?=$user['id']?>" class="user-delete">删除</a><?php endif;?>
+                        <?php if(checkAcl('config_update')):?>
+                        <a href="/config/update?id=<?=$config['id']?>">编辑</a>   
+                        <?php endif;?>    
                     </td>
                 </tr>
                 <?php endforeach;?>
@@ -105,6 +103,5 @@
 </div>
 <script src="/static/admin/js/config.js"></script>
 <script src="/static/admin/js/script.js"></script>
-<script src="/static/admin/js/user.js"></script>
 </body>
 </html>

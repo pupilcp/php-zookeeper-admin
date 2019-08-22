@@ -29,7 +29,7 @@ $(function(e) {
     }
 
     //========================请求url==============================
-    function requestUrl(url, data, successCb, failCb, method, extendData){
+    function requestUrl(url, data, successCb, failCb, method, extendData, completeCb){
         $.ajax({
             url: url,
             data: data,
@@ -49,25 +49,56 @@ $(function(e) {
                 console.log(e);
             },
             complete: function () {
-
+                if(completeCb){
+                    completeCb();
+                }
             }
         });
     }
 
     //==========================获取节点信息============================
+    var nodeInfoRequesting = 0;
     function getNodesInfo(Obj){
-        requestUrl(getNodesInfoUrl,{'path': Obj.attr('node-path')}, getNodesInfoSuccessCb, reqFailCb, 'GET', {'Obj': Obj});
+        if(nodeInfoRequesting == 1){
+            return false;
+        }
+        nodeInfoRequesting = 1;
+        requestUrl(getNodesInfoUrl,{'path': Obj.attr('node-path')}, getNodesInfoSuccessCb, reqFailCb, 'GET', {'Obj': Obj},function(){
+            nodeInfoRequesting = 0;
+        });
     }
     //==========================获取节点信息成功回调方法============================
     function getNodesInfoSuccessCb(result, extendData){
         var Obj = extendData.Obj;
+        var nextObj = Obj.parent().next();
+        if(nextObj.hasClass('Row')){
+            nextObj.remove();
+        }
+        var operopts = '';
+        if(actionAcl.update ==1){
+          operopts += '<span>[编辑]</span>';
+        }else{
+          operopts += '<span></span>';
+        }
+        operopts += '<span></span>';
+        if(actionAcl.create ==1){
+          operopts += '<span>[添加]</span>';
+        }else{
+          operopts += '<span></span>';
+        }
+        if(actionAcl.delete ==1){
+          operopts += '<span>[删除]</span>';
+        }else{
+          operopts += '<span></span>';
+        }
+        operopts += '<span class="nodeDetail">[详细]</span>';
         var html = '<div class="Row NewRow">';
         for (i in result.data){
             var node = result.data[i];
             html += '<div class="'+(node.childNum > 0 ? 'ParentNode hidden' : 'ChildNode')+'">';
             html += '<div class="title" node-path="'+node.nodePath+'" node-name="'+node.nodeName+'" node-value="'+node.nodeVal+'">'+node.nodeName+'</div>';
             html += '<div class="editBT"></div>';
-            html += '<div class="editArea"><span>[编辑]</span><span></span><span>[添加]</span><span>[删除]</span><span class="nodeDetail">[详细]</span></div>';
+            html += '<div class="editArea">'+operopts+'</div>';
             html += '</div>';
         }
         html += '</div>';
@@ -333,15 +364,36 @@ $(function(e) {
      
     //=============================== [删除]按钮 ================================ 
     function DelNode(obj){ //childNode
-        if(confirm('确定要删除吗？')){ 
-            requestUrl(deleteNodeUrl,{'path': obj.find('.title').attr('node-path')}, function(result,extendData){
-                var objParent = obj.parent(); 
-                var objChildren = obj.next('.Row'); 
-                obj.remove();//基于Jquery是利用析构函数，所以“删除”后其相关属性仍然存在，除非针对ID来操作就可以彻底删除 
-                objChildren.remove();//删除对象所有子节点 
-                ChangeParent(objParent); 
-            }, reqFailCb, 'POST', {'obj': obj});
-        } 
+        layer.open({
+            id:'deleteLayer',
+            type: 1,
+            title:'删除节点',
+            skin:'layui-layer-rim',
+            area:['300px', 'auto'],
+            content: 
+                  '<div style="margin-left: 18px;margin-top:20px;font-size:13px;">'
+                  +'<div>'
+                  +'<span>删除后无法恢复，确认删除'+obj.find('.title').attr('node-name')+'吗？</span>'
+                  +'</div>'
+                  +'</div>'
+            ,
+            btn:['确认','取消'],
+            btn1: function (index,layero) {
+                requestUrl(deleteNodeUrl,{'path': obj.find('.title').attr('node-path')}, function(result,extendData){
+                    var objParent = obj.parent(); 
+                    var objChildren = obj.next('.Row'); 
+                    obj.remove();//基于Jquery是利用析构函数，所以“删除”后其相关属性仍然存在，除非针对ID来操作就可以彻底删除 
+                    objChildren.remove();//删除对象所有子节点 
+                    ChangeParent(objParent); 
+                    layer.close(extendData.index);
+                }, function(result){
+                    layer.msg(result.message);
+                }, 'POST', {'obj': obj,'index' : index});
+            },
+            btn2:function (index,layero) {
+                 layer.close(index);
+            }
+        });
     } 
      
     //=============================== 编辑[确定]按钮 ================================ 
@@ -557,9 +609,13 @@ $(function(e) {
                   type: 'POST',
                   dataType: 'json',
                   success: function(result) {
-                      layer.close(index);
-                      //触发请求父级节点列表
-                      TModuleNodeName_Click(node, 1);
+                      if(result.code == 1000){
+                        layer.close(index);
+                        //触发请求父级节点列表
+                        TModuleNodeName_Click(node, 1);
+                      }else{
+                        layer.msg(result.message);
+                      } 
                   },
                   error:function(){
                     layer.msg('请求出现异常');

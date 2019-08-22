@@ -53,3 +53,52 @@ function echoJson($code, $message, $data = null)
     ]);
     exit();
 }
+
+/**
+ * 分页创建.
+ *
+ * @param mixed $baseUrl
+ * @param mixed $pageFlag
+ *
+ * @return string
+ */
+function getRequestUri($baseUrl = '', $pageFlag = 'page')
+{
+    $uri      = $_SERVER['REQUEST_URI'];
+    $uriRow   = explode('?', $uri);
+    $preUri   = $uriRow[0];
+    $queryStr = '';
+    if (isset($uriRow[1])) {
+        $params = explode('&', $uriRow[1]);
+        foreach ($params as $k => $p) {
+            if (0 === strpos($p, $pageFlag . '=')) {
+                unset($params[$k]);
+            }
+        }
+        if (count($params) > 0) {
+            $queryStr = implode('&', $params);
+        }
+    }
+
+    return $baseUrl . $preUri . ($queryStr ? '?' . $queryStr : '');
+}
+
+/**
+ * 判断当前用户的某个action是否有权限访问.
+ *
+ * @param string $action 操作标识   格式： controller_action
+ *
+ * @return bool
+ */
+function checkAcl($action)
+{
+    if (ADMINISTRATOR_ROLE == $_SESSION['role_name']) {
+        return true;
+    }
+    if (empty($_SESSION['role_acl'])) {
+        return false;
+    }
+    $acls = json_decode($_SESSION['role_acl'], true);
+
+    return in_array($action, $acls);
+}

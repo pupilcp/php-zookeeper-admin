@@ -2,6 +2,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*
+| password encryption key
+*/
+$config['passwd_encrypt_key'] = 'qHTEX9fEiOUJ7ckZsHNxefRgUZbj6jsl';
+
+/*
 |--------------------------------------------------------------------------
 | Base Site URL
 |--------------------------------------------------------------------------

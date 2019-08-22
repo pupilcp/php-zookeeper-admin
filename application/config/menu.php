@@ -45,4 +45,38 @@ return
 				],
 			],
 		],
+		[
+			'name'   => '角色管理',
+			'icon'   => '&#xe609;',
+			'url'    => '',
+			'self'   => '/role/index',
+			'hidden' => false,
+			'list'   => [
+				[
+					'name' => '角色列表',
+					'url'  => '/role/index',
+				],
+				[
+					'name' => '添加角色',
+					'url'  => '/role/create',
+				],
+			],
+		],
+		[
+			'name'   => '系统配置',
+			'icon'   => '&#xe620;',
+			'url'    => '',
+			'self'   => '/config/index',
+			'hidden' => false,
+			'list'   => [
+				[
+					'name' => '配置列表',
+					'url'  => '/config/index',
+				],
+				[
+					'name' => '添加配置',
+					'url'  => '/config/create',
+				],
+			],
+		],
     ];

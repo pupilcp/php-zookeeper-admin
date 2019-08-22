@@ -3,12 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title><?=isset($id)?'编辑':'添加';?>用户</title>
+    <title><?=isset($id)?'编辑':'添加';?>角色</title>
     <link rel="stylesheet" href="/static/common/layui/css/layui.css">
     <link rel="stylesheet" href="/static/admin/css/style.css">
     <script src="/static/common/layui/layui.js"></script>
     <script src="/static/common/jquery-3.3.1.min.js"></script>
     <script src="/static/common/vue.min.js"></script>
+    <style type="text/css">
+        .module-title{
+            height: 30px;line-height: 20px; vertical-align: bottom;margin-right: 10px; color: #666;
+        }
+    </style>
 </head>
 <body>
 <div id="app">
@@ -24,7 +29,7 @@
                 </li>
             </ul>
             <?php else:?>
-            <ul><li><a href="/manage/index">首页</a> <span>/</span></li><li><a href="/user/index">用户管理</a> <span>/</span></li><li><a href="javascript:;">编辑用户</a> <span>/</span></li></ul>
+            <ul><li><a href="/manage/index">首页</a> <span>/</span></li><li><a href="/role/index">角色管理</a> <span>/</span></li><li><a href="javascript:;">编辑角色</a> <span>/</span></li></ul>
             <?php endif;?>
             <?php $this->load->view('public/userinfo');?>
         </div>
@@ -36,41 +41,28 @@
         <!--右侧-->
         <div class="right">
             <fieldset class="layui-elem-field layui-field-title">
-                <legend><?=isset($id)?'编辑':'添加';?>用户</legend>
+                <legend><?=isset($id)?'编辑':'添加';?>角色</legend>
             </fieldset>
 
 
             <form class="layui-form " action="" method="POST">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">用户名</label>
+                    <label class="layui-form-label">角色名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="name" lay-verify="name" <?=isset($username)?'disabled':''?> value="<?=$username??'';?>" maxlength="20" placeholder="不超过20个字符" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">密码</label>
-                    <div class="layui-input-block">
-                        <input type="password" name="pwd" lay-verify="pwd" placeholder="<?=isset($id) ? '密码留空不作修改' : '不少于8个字符'?>" autocomplete="off" class="layui-input">
+                        <input type="text" name="name" <?=isset($role_name)?'disabled':''?> lay-verify="name" value="<?=$role_name??'';?>" maxlength="20" placeholder="不超过20个字符" autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="email" lay-verify="required|email" value="<?=$email??'';?>" placeholder="" autocomplete="off" class="layui-input">
+                    <label class="layui-form-label">权限列表</label>
+                    <?php foreach($acls as $acl):?>
+                    <div class="layui-input-block" style="width: 1000px;">
+                        <span class="module-title"><?=$acl['title'];?>：</span>
+                        <?php foreach($acl['action'] as $v):?>
+                        <input type="checkbox" class="acl-action" name="acl[]" value="<?=$v['acl'];?>" title="<?=$v['title'];?>" lay-skin="primary" <?php if(isset($roleAcls) && in_array($v['acl'],$roleAcls)) echo 'checked';?> />
+                        <?php endforeach;?>
                     </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label">所属角色</label>
-                    <div class="layui-input-block">
-                        <select name="role" lay-verify="role">
-                            <option value="0">请选择角色</option>
-                            <?php foreach($roles as $role):?>
-                            <option value="<?=$role['id'];?>" <?=(isset($role_id) && $role_id==$role['id']) ?'selected' : '';?>><?=$role['role_name'];?></option>
-                            <?php endforeach;?>
-                        </select>   
-                    </div>
+                    <?php endforeach;?>
                 </div>
 
                 <div class="layui-form-item">
@@ -81,7 +73,7 @@
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <input type="hidden" name="userId" id="userId" value="<?=$id??0;?>" />
+                        <input type="hidden" name="roleId" id="roleId" value="<?=$id??0;?>" />
                         <button class="layui-btn" lay-submit lay-filter="submit">保存</button>
                     </div>
                 </div>
@@ -100,29 +92,14 @@
         var verifyObj = {   
             name : function(value) {
                 if (value.length > 20) {
-                    return '用户名不能超过20个字符';
-                }else if(value.length <= 0){
-                    return '用户名不能为空';
-                }
-            },
-            role : function(value) {
-                if (value <= 0) {
-                    return '请选择角色';
-                }
-            }
-        };
-        if($('#userId').val() <= 0){
-            verifyObj.pwd = function(value) {
-                if (value.length < 8) {
-                    return '至少输入8个字符';
-                }
-            }
-        }
+                    return '不能超过20个字符';
+                }}
+            };
         form.verify(verifyObj);
         form.on('submit(submit)', function(data) {   
-            var url = '/user/create';
-            if(data.field.userId > 0){
-                url = '/user/update';
+            var url = '/role/create';
+            if(data.field.roleId > 0){
+                url = '/role/update';
             }
             $.ajax({
                 type : 'POST',
@@ -135,7 +112,7 @@
                     }else{
                         layer.msg('保存成功');
                         setTimeout(function(){
-                            location.href = '/user/index';
+                            location.href = '/role/index';
                         },1000);
                     }
                 },

@@ -25,7 +25,11 @@ class ZookeeperClient
      */
     public function __construct($params)
     {
-        $this->zookeeper = new Zookeeper($params['address']);
+        try{
+            $this->zookeeper = new Zookeeper($params['address']);
+        }catch(ZookeeperConnectionException $e){
+        }catch(Throwable $e){
+        }
     }
 
     /**

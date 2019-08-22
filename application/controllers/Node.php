@@ -8,11 +8,23 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Node extends CI_Controller
+include_once 'Base.php';
+class Node extends Base
 {
-    public function __construct(){
-       parent::__construct();
-       $this->load->library('ZookeeperClient', ['address' => '192.168.11.87:2181'], 'zk');
+    public function __construct()
+    {
+        parent::__construct();
+		//zookeeper扩展检测
+		if(!extension_loaded('zookeeper')){
+			exit('Please Install Zookeeper Extension <a href="javascript:history.back();">[返回]</a>');
+		}
+
+		$dbstatement = $this->db->from('zk_config')->select('id,content')->where('name', 'zookeeper_url')->where('is_delete', 0)->get();
+        $data        = $dbstatement->result_id->fetch(PDO::FETCH_ASSOC);
+        if (empty($data['content'])) {
+            exit('请先完善zookeeper服务地址的配置，<a href="/config/update?id=' . $data['id'] . '">点击配置</a>');
+        }
+        $this->load->library('ZookeeperClient', ['address' => trim($data['content'])], 'zk');
     }
 
     /**
@@ -27,11 +39,31 @@ class Node extends CI_Controller
         $stat     = [];
         $nodeVal  = $this->zk->get($path, $stat);
         $nodeName = $this->getNodeExtName($path);
+        //权限
+        $acls      = $this->session->userdata['role_acl'];
+        $actionAcl = ['create' => 0, 'update' => 0, 'delete' => 0];
+        if (ADMINISTRATOR_ROLE == $this->session->userdata['role_name']) {
+            $actionAcl['create'] = 1;
+            $actionAcl['update'] = 1;
+            $actionAcl['delete'] = 1;
+        } elseif (!empty($acls)) {
+            $aclsArr = json_decode($acls, true);
+            if (in_array('node_createnode', $aclsArr)) {
+                $actionAcl['create'] = 1;
+            }
+            if (in_array('node_updatenode', $aclsArr)) {
+                $actionAcl['update'] = 1;
+            }
+            if (in_array('node_deletenode', $aclsArr)) {
+                $actionAcl['delete'] = 1;
+            }
+        }
         $this->load->view('node/index', [
-            'nodeName' => $nodeName,
-            'nodeVal'  => $nodeVal,
-            'childNum' => $stat['numChildren'] ?? 0,
-            'nodePath' => $path,
+            'nodeName'  => $nodeName,
+            'nodeVal'   => $nodeVal,
+            'childNum'  => $stat['numChildren'] ?? 0,
+            'nodePath'  => $path,
+            'actionAcl' => $actionAcl,
         ]);
     }
 
@@ -84,19 +116,19 @@ class Node extends CI_Controller
     public function createNode()
     {
         $path = trim($this->input->post('path'));
-        $val = trim($this->input->post('val'));
+        $val  = trim($this->input->post('val'));
         $attr = trim($this->input->post('attr'));
         if (empty($path) || empty($val)) {
             echoJson(1001, 'Error Param');
         }
         $sequence = null;
-        if($attr == 1){
+        if (1 == $attr) {
             $sequence = Zookeeper::SEQUENCE;
         }
         $rs = $this->zk->makeNode($path, $val, [], $sequence);
-        if($rs){
+        if ($rs) {
             echoJson(1000, 'Success');
-        }else{
+        } else {
             echoJson(1002, 'CREATE FAIL');
         }
     }
@@ -107,14 +139,14 @@ class Node extends CI_Controller
     public function updateNode()
     {
         $path = trim($this->input->post('path'));
-        $val = trim($this->input->post('val'));
+        $val  = trim($this->input->post('val'));
         if (empty($path) || empty($val)) {
             echoJson(1001, 'Error Param');
         }
         $rs = $this->zk->set($path, $val);
-        if($rs){
+        if ($rs) {
             echoJson(1000, 'Success');
-        }else{
+        } else {
             echoJson(1002, 'Update Fail');
         }
     }
@@ -128,19 +160,19 @@ class Node extends CI_Controller
         if (empty($path)) {
             echoJson(1001, 'Error Param');
         }
-        try{
+        try {
             $rs = $this->zk->deleteNode($path);
-            if($rs === null){
+            if (null === $rs) {
                 echoJson(1002, 'Node Not Exist');
-            }else if($rs){
+            } elseif ($rs) {
                 echoJson(1000, 'Success');
-            }else{
+            } else {
                 echoJson(1003, 'Delete Fail');
             }
-        }catch(Throwable $e){
-            if($e->getCode() == -111){
+        } catch (Throwable $e) {
+            if ($e->getCode() == -111) {
                 echoJson(1004, 'Error: ChildNode Not Empty');
-            }else{
+            } else {
                 echoJson(1003, 'Delete Fail');
             }
         }
