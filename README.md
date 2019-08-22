@@ -11,7 +11,7 @@
 1. nginx
 2. php >= 7.1
 3. mysql >= 5.6
-4. zookeeper扩展
+4. zookeeper扩展，https://github.com/php-zookeeper/php-zookeeper
 
 根据上述的依赖搭建web环境（网上很多教程，这里就不再叙述）
 
